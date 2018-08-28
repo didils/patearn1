@@ -19,6 +19,10 @@ urlpatterns = [
         "users/",
         include("patearn.users.urls", namespace="users"),
     ),
+    path(
+        "cases/",
+        include("patearn.cases.urls", namespace="cases"),
+    ),
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
 ] + static(
