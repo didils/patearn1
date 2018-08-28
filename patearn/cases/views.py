@@ -6,7 +6,9 @@ class ListAllCases(APIView):
 
     def get(self, request, format=None):
 
-        all_cases = models.Case.objects.all()
+        print(request.user)
+
+        all_cases = models.Case.objects.filter(owner__username=request.user)
 
         serializer = serializers.CaseSerializer(all_cases, many=True)
 

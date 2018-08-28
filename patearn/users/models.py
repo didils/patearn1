@@ -29,5 +29,9 @@ class User(AbstractUser):
     note = CharField(max_length=2000, blank=True, null=True)
     is_leave = CharField(max_length=80, choices=LEAVE_CHOICES, blank=True, null=True)
 
+    @property
+    def count_cases(self):
+        return self.cases.all().count()
+
     def get_absolute_url(self):
         return reverse("users:detail", kwargs={"username": self.username})

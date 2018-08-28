@@ -17,7 +17,7 @@ class Case(models.Model):
     trademark_image = models.ImageField()
     
     # 주인이 사라졌을 때, 종속되어 있는 아이들을 어떻게 할것인가? 를 지정해 줘야 하는듯, on_delete=models.PROTECT를 넣어서 해결
-    owner = models.ForeignKey(user_models.User, null=True, on_delete=models.PROTECT)
+    owner = models.ForeignKey(user_models.User, null=True, on_delete=models.PROTECT, related_name='cases')
     
     # examiner 관한 사항 추가 examiner = models.ForeignKey(examiner_models.Examiner, null=True, on_delete=models.PROTECT) import도 역시 해야 함.
     
@@ -40,6 +40,8 @@ class Case(models.Model):
     def __str__(self):
         return '상표명: {} - 출원인: {}'.format(self.trademark_title, self.owner.name)
     
+    class Meta:
+        ordering =['-request_date']
 
     
 
