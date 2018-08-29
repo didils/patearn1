@@ -73,6 +73,7 @@ LOCAL_APPS = [
     'patearn.users.apps.UsersAppConfig',
     # Your stuff: custom apps go here
     'patearn.cases.apps.CasesConfig',
+    'patearn.products.apps.ProductsConfig',
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
