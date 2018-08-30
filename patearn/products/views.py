@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from . import models, serializers, jsons
 from rest_framework import status
 from rest_framework.response import Response
+from django.db.models import Q
 
 class UploadProducts(APIView):
 
@@ -16,21 +17,19 @@ class UploadProducts(APIView):
 
         return Response(status=status.HTTP_200_OK)
 
-        """
-        serializer = serializers.ProductSerializer(data=request.data)
-        print(serializer)
-        
-        if serializer.is_valid():
-            
-            print(serializer.data)
-            
-            models.Product.objects.create(**json)
-            print(models.Product.objects.all())
+class Search(APIView):
 
-            return Response(status=status.HTTP_200_OK)
+    def get(self, request, format=None):
+
+        keyword = request.query_params.get('keyword', None)
+
+        result = models.Product.objects.filter(Q(product__contains=keyword) | Q(product_en__icontains=keyword))
+        
+        if result is not None:
+            serializer = serializers.ProductSerializer(result, many=True)
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
 
         else:
-
+            print(serializer.errors)
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        """
         
