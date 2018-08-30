@@ -1,52 +1,46 @@
-from django.contrib.auth import get_user_model
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse
-from django.views.generic import DetailView, ListView, RedirectView, UpdateView
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from . import models
 
-User = get_user_model()
+class ChangePassword(APIView):
 
+    def put(self, request, username, format=None):
 
-class UserDetailView(LoginRequiredMixin, DetailView):
+        user = request.user
 
-    model = User
-    slug_field = "username"
-    slug_url_kwarg = "username"
+        if user.username == username:
 
+            current_password = request.data.get('current_password', None)
 
-user_detail_view = UserDetailView.as_view()
+            if current_password is not None:
 
+                passwords_match = user.check_password(current_password)
 
-class UserListView(LoginRequiredMixin, ListView):
+                if passwords_match:
 
-    model = User
-    slug_field = "username"
-    slug_url_kwarg = "username"
+                    new_password = request.data.get('new_password', None)
 
+                    if new_password is not None:
 
-user_list_view = UserListView.as_view()
+                        user.set_password(new_password)
 
+                        user.save()
 
-class UserUpdateView(LoginRequiredMixin, UpdateView):
+                        return Response(status=status.HTTP_200_OK)
 
-    model = User
-    fields = ["name"]
+                    else:
 
-    def get_success_url(self):
-        return reverse("users:detail", kwargs={"username": self.request.user.username})
+                        return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    def get_object(self):
-        return User.objects.get(username=self.request.user.username)
+                else:
 
+                    return Response(status=status.HTTP_400_BAD_REQUEST)
 
-user_update_view = UserUpdateView.as_view()
+            else:
 
+                return Response(status=status.HTTP_400_BAD_REQUEST)
 
-class UserRedirectView(LoginRequiredMixin, RedirectView):
+        else:
 
-    permanent = False
-
-    def get_redirect_url(self):
-        return reverse("users:detail", kwargs={"username": self.request.user.username})
-
-
-user_redirect_view = UserRedirectView.as_view()
+            return Response(status=status.HTTP_400_BAD_REQUEST)
